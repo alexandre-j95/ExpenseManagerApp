@@ -1,0 +1,45 @@
+
+
+import csv
+import datetime
+from expenses import Expense, Category
+
+HEADER = ["id", "date", "description", "category", "amount"]
+
+def load_expenses(csv_file : str) -> list[Expense]:
+    with open(csv_file, "r", newline="") as f:
+        reader = csv.reader(f)
+        expenses = []
+
+        header = next(reader)
+        if (header != HEADER):
+            raise ValueError("invalid header")
+
+        for row in reader:
+            expenses.append( row_to_expense(row) )
+
+    return expenses
+
+
+def save_expenses(csv_file: str, expenses: list[Expense]) -> None:
+    with open(csv_file, "w", newline="") as f:
+        writer = csv.writer(f)
+
+        writer.writerow(HEADER)
+        for expense in expenses:
+            writer.writerow( expense_to_row(expense) )
+
+
+def row_to_expense(row: list[str]) -> Expense:
+    expense_id = int(row[0])
+    year, month, day = row[1].split("-")
+    date = datetime.date(int(year), int(month), int(day))
+    description = row[2]
+    category = Category(row[3])
+    amount = float(row[4])
+
+    expense = Expense(expense_id, date, description, category, amount)
+    return expense
+
+def expense_to_row(expense: Expense) -> list[object]:
+    return [expense.expense_id, expense.date, expense.description, expense.category.value, expense.amount]
