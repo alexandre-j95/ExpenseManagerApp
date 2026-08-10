@@ -3,13 +3,14 @@
 import csv
 import datetime
 from expenses import Expense, Category
+from decimal import Decimal
 
 HEADER = ["id", "date", "description", "category", "amount"]
 
-def load_expenses(csv_file : str) -> list[Expense]:
+def load_expenses(csv_file : str) :
     with open(csv_file, "r", newline="") as f:
         reader = csv.reader(f)
-        expenses = []
+        expenses: list[Expense] = []
 
         header = next(reader)
         if (header != HEADER):
@@ -18,7 +19,12 @@ def load_expenses(csv_file : str) -> list[Expense]:
         for row in reader:
             expenses.append( row_to_expense(row) )
 
-    return expenses
+    next_id = 0
+    for e in expenses:
+        if e.expense_id > next_id:
+            next_id = e.expense_id
+
+    return expenses, int(next_id) + 1
 
 
 def save_expenses(csv_file: str, expenses: list[Expense]) -> None:
@@ -36,7 +42,7 @@ def row_to_expense(row: list[str]) -> Expense:
     date = datetime.date(int(year), int(month), int(day))
     description = row[2]
     category = Category(row[3])
-    amount = float(row[4])
+    amount = Decimal(row[4])
 
     expense = Expense(expense_id, date, description, category, amount)
     return expense
