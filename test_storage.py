@@ -7,6 +7,7 @@ import csv
 
 from decimal import Decimal
 
+from expense_manager import ExpenseManager
 from storage import (
     load_expenses,
     save_expenses,
@@ -57,8 +58,9 @@ class TestSaveExpenses(unittest.TestCase):
         expense0 = Expense(1, datetime.date(2026, 8, 9), "First purchase", Category.OTHER, Decimal("1.01"))
         expense1 =  Expense(2, datetime.date(2026, 8, 9), "Second purchase", Category.FOOD, Decimal("2.02"))
         expenses = [expense0, expense1]
+        manager = ExpenseManager(expenses, 3)
 
-        save_expenses(self.path, expenses)
+        save_expenses(self.path, manager)
 
         with open(self.path, "r") as f:
             reader = csv.reader(f)

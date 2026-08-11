@@ -22,10 +22,10 @@ Choose an option: 1
 
 Requests a description, category, amount and date
 
+Date (YYYY-MM-DD): 2026-08-08 # Valid date formats
 Description: Groceries # Non-empty description withcharacter limit
 Category: Food # Predefined list of options
 Amount: 42.50 # Valid Monetary amount
-Date (YYYY-MM-DD): 2026-08-08 # Valid date formats
 
 Expense added successfully!
 
@@ -184,3 +184,8 @@ If there are expenses 1, 2, 3, next expense would be 4
 If expense 2 gets "deleted" next expense id would still be 4.
 
 The expense ID comes from an internal counter it won't match up with the index on the array.
+
+
+## Future Ideas / To Do's 
+
+- Chance the sequential menu inputs using input into having all four fields visible simultaneously and moving an actual cursor up/down between them, with terminal control/keyboard handling (ex: curses).

@@ -2,6 +2,7 @@
 
 import csv
 import datetime
+from expense_manager import ExpenseManager
 from expenses import Expense, Category
 from decimal import Decimal
 
@@ -27,12 +28,12 @@ def load_expenses(csv_file : str) :
     return expenses, int(next_id) + 1
 
 
-def save_expenses(csv_file: str, expenses: list[Expense]) -> None:
+def save_expenses(csv_file: str, manager: ExpenseManager) -> None:
     with open(csv_file, "w", newline="") as f:
         writer = csv.writer(f)
 
         writer.writerow(HEADER)
-        for expense in expenses:
+        for expense in manager.expenses:
             writer.writerow( expense_to_row(expense) )
 
 

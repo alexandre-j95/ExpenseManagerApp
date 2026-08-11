@@ -21,14 +21,5 @@ class Expense:
         self.category = category
         self.amount = amount
 
-
-def add_expense(expenses: list[Expense],
-                date: datetime.date,
-                description: str,
-                category: Category,
-                amount: Decimal,
-                next_id: int):
-    expense = Expense(next_id, date, description, category, amount)
-    expenses.append(expense)
-    next_id += 1
-    return next_id;
+    def __str__(self) -> str:
+        return f"{self.expense_id} | {self.description} | {self.category.value} | {self.amount}"
