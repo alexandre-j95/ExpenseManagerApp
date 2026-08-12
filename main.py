@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from decimal import Decimal
 import os
@@ -7,6 +6,7 @@ from storage import load_expenses, save_expenses
 from expense_manager import ExpenseManager
 
 PATH_TO_CSV = "data/expenses.csv"
+
 
 def main():
 
@@ -44,9 +44,9 @@ Choose an option: """)
             case "3":
                 select_remove_expenses(manager)
             case "4":
-                select_filter_expenses()
+                select_filter_expenses(manager)
             case "5":
-                select_show_summary()
+                select_show_summary(manager)
             case "6":
                 exiting = select_exit()
             case _:
@@ -76,7 +76,13 @@ def select_add_expense(manager: ExpenseManager):
         break
 
     while True:
-        choices = {1: Category.FOOD, 2: Category.TRANSPORT, 3: Category.ENTERTAINMENT, 4: Category.HOUSING, 5: Category.OTHER}
+        choices = {
+            1: Category.FOOD,
+            2: Category.TRANSPORT,
+            3: Category.ENTERTAINMENT,
+            4: Category.HOUSING,
+            5: Category.OTHER,
+        }
         print("1) Food  2) Transport  3) Entertainment  4) Housing  5) Other")
         try:
             category = choices[int(input("Category (1-5): "))]
@@ -87,8 +93,8 @@ def select_add_expense(manager: ExpenseManager):
 
     while True:
         value = input("Amount: ")
-        try: 
-            amount = Decimal(value) 
+        try:
+            amount = Decimal(value)
             break
         except ValueError:
             print("Invalid amount. Please enter a valid monetary amount.")
@@ -99,9 +105,11 @@ def select_add_expense(manager: ExpenseManager):
     print("Expense added successfully!")
     input("Press any key to continue...")
 
+
 def select_list_expenses(manager: ExpenseManager):
     display_expenses(manager.expenses)
     input("Press any key to continue...")
+
 
 def select_remove_expenses(manager: ExpenseManager):
     print("--- Remove Expense ---")
@@ -140,15 +148,87 @@ def select_remove_expenses(manager: ExpenseManager):
         break
 
 
-def select_filter_expenses():
-    pass
+def select_filter_expenses(manager: ExpenseManager):
+    while True:
+        print("""1. By category
+2. By month
+3. Back
+""")
+        choice = input("Choose an option (1-3): ")
+        match choice:
+            case "1":
+                while True:
+                    choices = {
+                        1: Category.FOOD,
+                        2: Category.TRANSPORT,
+                        3: Category.ENTERTAINMENT,
+                        4: Category.HOUSING,
+                        5: Category.OTHER,
+                    }
+                    print(
+                        "1) Food\n2) Transport\n3) Entertainment\n4) Housing\n5) Other"
+                    )
+                    try:
+                        category = choices[int(input("Category (1-5): "))]
+                        filtered = manager.get_by_category(category)
+                        if not filtered:
+                            print(
+                                f"There are no expenses in the category: {category.value}"
+                            )
+                            input("press any key to continue...")
+                            break
+                        display_expenses(filtered)
+                        input("press any key to continue...")
+                        break
+                    except (ValueError, KeyError):
+                        print("invalid choice")
+                        input("press any key to continue...")
+                        continue
+                break
+            case "2":
+                while True:
+                    try:
+                        month = int(input("Please select a month (1-12):"))
+                        if month < 1 or month > 12:
+                            print("invalid choice")
+                            continue
+                        filtered = manager.get_by_month(month)
+                        if not filtered:
+                            print(f"There are no expenses in the month {month}")
+                            input("press any key to continue...")
+                            break
+                        display_expenses(filtered)
+                        input("press any key to continue...")
+                        break
+                    except ValueError:
+                        print("Not a valid month")
+                        input("press any key to continue...")
+                        continue
+                break
+            case "3":
+                break
 
-def select_show_summary():
-    pass
+            case _:
+                print("Invalid option")
+                continue
+
+
+def select_show_summary(manager: ExpenseManager):
+    totals_dict = manager.compute_totals()
+    total_spent = sum(totals_dict.values(), Decimal("0"))
+    print(f"""--- Summary ---
+    Total spent:  €{total_spent:>10.2f}
+
+    By category:""")
+    for k, v in totals_dict.items():
+        print(f"{k.value:<17} €{v:>10.2f}")
+    input("press any key to continue...")
+
 
 def select_exit():
     print("Goodbye!")
     return True
+
 
 def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
@@ -166,7 +246,6 @@ def display_expenses(expenses):
             f"{expense.category.value:<17} "
             f"€{expense.amount:>10.2f}"
         )
-
 
 
 if __name__ == "__main__":

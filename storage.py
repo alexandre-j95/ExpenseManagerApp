@@ -1,5 +1,3 @@
-
-
 import csv
 import datetime
 from expense_manager import ExpenseManager
@@ -8,17 +6,18 @@ from decimal import Decimal
 
 HEADER = ["id", "date", "description", "category", "amount"]
 
-def load_expenses(csv_file : str) :
+
+def load_expenses(csv_file: str):
     with open(csv_file, "r", newline="") as f:
         reader = csv.reader(f)
         expenses: list[Expense] = []
 
         header = next(reader)
-        if (header != HEADER):
+        if header != HEADER:
             raise ValueError("invalid header")
 
         for row in reader:
-            expenses.append( row_to_expense(row) )
+            expenses.append(row_to_expense(row))
 
     next_id = 0
     for e in expenses:
@@ -34,7 +33,7 @@ def save_expenses(csv_file: str, manager: ExpenseManager) -> None:
 
         writer.writerow(HEADER)
         for expense in manager.expenses:
-            writer.writerow( expense_to_row(expense) )
+            writer.writerow(expense_to_row(expense))
 
 
 def row_to_expense(row: list[str]) -> Expense:
@@ -48,5 +47,12 @@ def row_to_expense(row: list[str]) -> Expense:
     expense = Expense(expense_id, date, description, category, amount)
     return expense
 
+
 def expense_to_row(expense: Expense) -> list[object]:
-    return [expense.expense_id, expense.date, expense.description, expense.category.value, expense.amount]
+    return [
+        expense.expense_id,
+        expense.date,
+        expense.description,
+        expense.category.value,
+        expense.amount,
+    ]
